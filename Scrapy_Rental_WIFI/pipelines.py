@@ -39,7 +39,7 @@ class ScrapyRentalWifiPipeline(object):
         sql = 'select * from Rental_WIFI where url = ({})'
         res = self.cur.execute(sql.format('?'),(items[1],))
         row = self.cur.fetchone()
-        print(items)
+        # print(items)
 
         if row == None:
             return False
@@ -50,3 +50,6 @@ class ScrapyRentalWifiPipeline(object):
         del items[-1]
         if row != None and set(items) == set(row):
             return True
+
+        print(items,'---new')
+        print(row,'old')
