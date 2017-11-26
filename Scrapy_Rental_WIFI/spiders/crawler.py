@@ -117,3 +117,96 @@ class WIFICrawler(scrapy.Spider):
 
         return item
 
+
+from selenium import webdriver
+import requests
+import time
+import random
+
+def search_around(driver ,times, string):
+    for i in range(times):
+        try:
+            time.sleep(2)
+            elements = driver.find_elements_by_tag_name('a')
+            if(len(elements) == 0):
+                driver.back
+            rand_num = random.randint(1,len(elements))
+            elements[rand_num].click()
+            print(i)
+        except Exception as e:
+            driver.back
+            print(e)
+            pass
+
+driver = webdriver.Chrome()
+driver
+
+fake_lat = "37.773972"
+fake_long = "-122.431297"
+
+# Sending latitude, longitude with JS script
+driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){"+
+                      "var position = {\"coords\" : {\"latitude\": \"37.773972\",\"longitude\": \"-122.431297\"}};"+
+                                    "success(position);}"); 
+
+# Printing latitude, longitude from the browser
+# print(driver.execute_script("var positionStr=\"\";"+
+#                                 "window.navigator.geolocation.getCurrentPosition(function(pos){positionStr=pos.coords.latitude+\":\"+pos.coords.longitude});"+
+#                                 "return positionStr;")) % (fake_lat, fake_long)
+
+# Neat stuff from google maps api!
+# driver.get('https://www.google.com.tw/maps')
+# driver.switch_to_window('')
+# driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){"+
+#                       "var position = {\"coords\" : {\"latitude\": 23.0185,\"longitude\": 120.3427}};"+
+#                                     "success(position);}"); 
+# time.sleep(5)
+# googlemap_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s" % (fake_lat, fake_long)
+driver.get('https://www.google.com.tw')
+time.sleep(5)
+inputElement = driver.find_element_by_id('lst-ib')
+inputElement.send_keys('出國上網')
+driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){"+
+                      "var position = {\"coords\" : {\"latitude\": 27.773972,\"longitude\": 122.431297}};"+
+                                    "success(position);}"); 
+driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){"+"var position = {\"coords\" : {\"latitude\": \"52.520007\",\"longitude\": \"13.404954\"}};"+"success(position);}");
+# driver.
+
+inputElement.submit()
+# get_data = requests.get(googlemap_url)
+# print (get_data.content)
+# for i in range(1000):
+#     driver.execute_script('''
+#       window.navigator.geolocation.getCurrentPosition = function(success) {
+#         var position = { coords : { latitude: "23.0185", longitude: "120.3427" } }; 
+#         success(position);
+#       }
+#     ''');
+driver.execute_script('''
+  window.navigator.geolocation.getCurrentPosition = function(success) {
+    var position = { coords : { latitude: "24.565766", longitude: "120.8318" } }; 
+    success(position);
+  }
+''');
+time.sleep(10)
+driver.refresh()
+
+
+# element = driver.find_element_by_xpath('//a[@href^="https://www.googleadservices.com"]')
+while True:
+    try :
+        element = driver.find_element_by_xpath('//a[text()[contains(.,"出國上網就選飛買家")]]')
+        break
+    except Exception as e:
+        driver.refresh()
+        pass
+
+element.click()
+search_around(driver,10,"")
+time.sleep(30)
+driver.quit()
+
+
+    
+
+
