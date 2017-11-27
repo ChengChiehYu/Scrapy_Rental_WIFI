@@ -126,23 +126,32 @@ import random
 def search_around(driver ,times, string):
     for i in range(times):
         try:
+#             driver.switch_to_alert().click()
             time.sleep(2)
             elements = driver.find_elements_by_tag_name('a')
             if(len(elements) == 0):
-                driver.back
+                driver.back()
             rand_num = random.randint(1,len(elements))
+            if(not elements[rand_num].is_displayed):
+                print('123')
+            print(elements[rand_num].text)
             elements[rand_num].click()
             print(i)
         except Exception as e:
-            driver.back
+            driver.back()
             print(e)
             pass
 
-driver = webdriver.Chrome()
-driver
+def send_keys_slow(inputElement, string):
+#     inputElement.
+    for i in range(len(string)):
+        inputElement.send_keys(string[i])
+        time.sleep(random.randint(30,150)/100)
 
-fake_lat = "37.773972"
-fake_long = "-122.431297"
+driver = webdriver.Chrome()
+driver.switch_to_window('')
+driver.maximize_window()
+
 
 # Sending latitude, longitude with JS script
 driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){"+
@@ -165,7 +174,8 @@ driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(
 driver.get('https://www.google.com.tw')
 time.sleep(5)
 inputElement = driver.find_element_by_id('lst-ib')
-inputElement.send_keys('出國上網')
+# inputElement.send_keys('出國上網')
+send_keys_slow(inputElement,'出國上網')
 driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){"+
                       "var position = {\"coords\" : {\"latitude\": 27.773972,\"longitude\": 122.431297}};"+
                                     "success(position);}"); 
@@ -193,14 +203,20 @@ driver.refresh()
 
 
 # element = driver.find_element_by_xpath('//a[@href^="https://www.googleadservices.com"]')
-while True:
+index = 0
+while index < 10:
     try :
         element = driver.find_element_by_xpath('//a[text()[contains(.,"出國上網就選飛買家")]]')
         break
     except Exception as e:
         driver.refresh()
         pass
-
+    finally :
+        index = index + 1
+actions = webdriver.common.action_chains.ActionChains(driver)
+actions.move_to_element(element)
+actions.perform()
+time.sleep(2)
 element.click()
 search_around(driver,10,"")
 time.sleep(30)
