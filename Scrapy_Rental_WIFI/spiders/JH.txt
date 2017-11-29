@@ -1,0 +1,148 @@
+from selenium import webdriver
+import requests
+from bs4 import BeautifulSoup
+import time
+import random
+import re
+
+def search_around(driver ,times, string):
+    for i in range(times):
+        try:
+            time.sleep(2)
+            elements = driver.find_elements_by_tag_name('a')
+            if(len(elements) == 0):
+                driver.back()
+            rand_num = random.randint(1,len(elements))
+            print(elements[rand_num].text)
+            elements[rand_num].click()
+            print(i)
+        except Exception as e:
+            driver.back()
+            print(e)
+            pass
+
+def send_keys_slow(inputElement, string):
+    for i in range(len(string)):
+        inputElement.send_keys(string[i])
+        time.sleep(random.randint(30,150)/100)
+def get_current_ip():
+    res = requests.get('http://ipinfo.io')
+    soup = BeautifulSoup(res.text,'lxml')
+    ip = soup.select('p')[0]
+    res = re.search("([0-9]{1,3}\.){3}[0-9]{1,3}", ip.text)
+    return res.group()
+    
+origin_ip = get_current_ip()
+# options = webdriver.ChromeOptions()
+# ip = 'http://'+proxys[0]['proxy'][6:]
+# s = '--proxy-server=%s' %ip
+# print(s)
+# options.add_argument('--proxy-server=%s' %ip)
+
+# time.sleep(10)
+
+# driver = webdriver.Chrome(chrome_options=options)
+index = 0
+while True:
+    index = index +1
+    print(index)
+    while True:
+        try:
+            new_ip = get_current_ip()
+            time.sleep(10)
+            print(origin_ip)
+            if(origin_ip != new_ip):
+                origin_ip = new_ip
+    #             print(origin_ip)
+                break
+        except Exception as e:
+            print(e)
+            pass
+    try:
+        print(new_ip)
+        driver = webdriver.Chrome()
+
+        driver.switch_to_window('')
+        driver.maximize_window()
+
+
+        # Sending latitude, longitude with JS script
+        driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){"+
+                              "var position = {\"coords\" : {\"latitude\": \"37.773972\",\"longitude\": \"-122.431297\"}};"+
+                                            "success(position);}"); 
+
+        # Printing latitude, longitude from the browser
+        # print(driver.execute_script("var positionStr=\"\";"+
+        #                                 "window.navigator.geolocation.getCurrentPosition(function(pos){positionStr=pos.coords.latitude+\":\"+pos.coords.longitude});"+
+        #                                 "return positionStr;")) % (fake_lat, fake_long)
+
+        # Neat stuff from google maps api!
+        # driver.get('https://www.google.com.tw/maps')
+        # driver.switch_to_window('')
+        # driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){"+
+        #                       "var position = {\"coords\" : {\"latitude\": 23.0185,\"longitude\": 120.3427}};"+
+        #                                     "success(position);}"); 
+        # time.sleep(5)
+        # googlemap_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s" % (fake_lat, fake_long)
+        driver.get('https://www.google.com.tw')
+        time.sleep(5)
+        inputElement = driver.find_element_by_id('lst-ib')
+        # inputElement.send_keys('出國上網')
+        send_keys_slow(inputElement,'離婚協議法律')
+        driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){"+
+                              "var position = {\"coords\" : {\"latitude\": 27.773972,\"longitude\": 122.431297}};"+
+                                            "success(position);}"); 
+        driver.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){"+"var position = {\"coords\" : {\"latitude\": \"52.520007\",\"longitude\": \"13.404954\"}};"+"success(position);}");
+        # driver.
+
+        inputElement.submit()
+        # get_data = requests.get(googlemap_url)
+        # print (get_data.content)
+        # for i in range(1000):
+        #     driver.execute_script('''
+        #       window.navigator.geolocation.getCurrentPosition = function(success) {
+        #         var position = { coords : { latitude: "23.0185", longitude: "120.3427" } }; 
+        #         success(position);
+        #       }
+        #     ''');
+        lf = (random.randint(0,1000)-500)/1000000
+        tb = (random.randint(0,1000)-500)/1000000
+        script = '''
+          window.navigator.geolocation.getCurrentPosition = function(success) {
+            var position = { coords : { latitude: "%s", longitude: "%s" } }; 
+            success(position);
+          }
+        ''' % (25.048520+lf, 121.519157+tb)
+        driver.execute_script(script);
+        # time.sleep(10)
+        # driver.refresh()
+
+
+        # element = driver.find_element_by_xpath('//a[@href^="https://www.googleadservices.com"]')
+        index = 0
+        while index < 3:
+            try :
+                element = driver.find_element_by_xpath('//a[text()[contains(.,"法律諮詢網 - 離婚協議法律 - lawknow.com")]]')
+                break
+            except Exception as e:
+                driver.refresh()
+                pass
+            finally :
+                index = index + 1
+        if(index == 3):
+            driver.quit()
+        else:
+            actions = webdriver.common.action_chains.ActionChains(driver)
+            actions.move_to_element(element)
+            actions.perform()
+            time.sleep(2)
+            element.click()
+            search_around(driver,10,"")
+    #         time.sleep(30)
+            driver.quit()
+    except Exception as e:
+        pass
+
+
+    
+
