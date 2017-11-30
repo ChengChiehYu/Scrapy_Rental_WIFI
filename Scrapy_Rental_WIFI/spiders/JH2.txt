@@ -8,7 +8,7 @@ import re
 def search_around(driver ,times, string):
     for i in range(times):
         try:
-            time.sleep(5)
+            time.sleep(random.randint(3,7))
             elements = driver.find_elements_by_tag_name('input')
             if(len(elements) > 0):
                 rand_num = random.randint(1,len(elements))
@@ -40,7 +40,7 @@ def get_current_ip():
 
 def get_random_country_geolocation():
     country_list = {
-        '新北市':(121.6739,24.91571),
+#         '新北市':(121.6739,24.91571),
 #         '高雄市':(120.666,23.01087),
 #         '臺中市':(120.9417,24.23321),
 #         '臺北市':(121.5598,25.09108),
@@ -49,7 +49,7 @@ def get_random_country_geolocation():
 #         '彰化縣':(120.4818,23.99297),
 #         '屏東縣':(120.62,22.54951),
 #         '雲林縣':(120.3897,23.75585),
-#         '苗栗縣':(120.9417,24.48927),
+        '苗栗縣':(120.9417,24.48927),
 #         '嘉義縣':(120.574,23.45889),
 #         '新竹縣':(121.1252,24.70328),
 #         '南投縣':(120.9876,23.83876),
@@ -67,7 +67,8 @@ def get_random_country_geolocation():
     geolocation = country_list[country]
     return country,geolocation[0], geolocation[1]
 
-cmp_ip = '61.216.99.1'
+# cmp_ip = '61.216.99.1'
+cmp_ip = '114.136.170.228'
 origin_ip = cmp_ip
 
 index2 = 0
@@ -98,16 +99,29 @@ while True:
           }
         ''' % (latitude+lf, longitude+tb)
         driver = webdriver.Chrome()
+        driver.delete_all_cookies()
+        
 
-#         driver.switch_to_window('')
-#         driver.maximize_window()
+        driver.switch_to_window('')
+        driver.maximize_window()
 
         driver.execute_script(script); 
         driver.get('https://www.google.com.tw')
         time.sleep(5)
         inputElement = driver.find_element_by_id('lst-ib')
+        modification_words = ('推薦','廣告','推件','廣告','抓姦','抓奸','好評','厲害','第一','最強','最快')
+        modification_words = list(modification_words)
+        prefix = ''
+        if(random.randint(0,1)):
+            prefix = random.choice(modification_words)
+            modification_words.remove(prefix)
+        suffix = ''
+        if(random.randint(0,1)):
+            suffix = random.choice(modification_words)        
+        
         keywords = ('離婚協議法律','法律諮詢服務網')
         keyword = random.choice(keywords)
+#         keyword = prefix + keyword + suffix
         send_keys_slow(inputElement, keyword)
         driver.execute_script(script); 
 
@@ -120,7 +134,7 @@ while True:
         index = 0
         while index < 3:
             try :
-                element = driver.find_element_by_xpath('//a[text()[contains(.,"法律諮詢網 - 離婚協議法律 - lawknow.com")]]')
+                element = driver.find_element_by_xpath('//a[text()[contains(.,"法律諮詢網 - 離婚協議法律")]]')
                 break
             except Exception as e:
                 driver.refresh()
@@ -137,6 +151,7 @@ while True:
             element.click()
             search_around(driver,10,"")
     #         time.sleep(30)
+            driver.delete_all_cookies()
             driver.quit()
     except Exception as e:
         print(e)
