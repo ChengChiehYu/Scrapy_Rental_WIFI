@@ -9,12 +9,12 @@ def search_around(driver ,times, string):
     for i in range(times):
         try:
             time.sleep(random.randint(3,7))
-            elements = driver.find_elements_by_tag_name('input')
-            if(len(elements) > 0):
-                rand_num = random.randint(1,len(elements))
-                elements[rand_num].click()
-                rand_num = random.randint(1,len(elements))
-                elements[rand_num].click()
+#             elements = driver.find_elements_by_tag_name('input')
+#             if(len(elements) > 0):
+#                 rand_num = random.randint(1,len(elements))
+#                 elements[rand_num].click()
+#                 rand_num = random.randint(1,len(elements))
+#                 elements[rand_num].click()
             
             elements = driver.find_elements_by_tag_name('a')
             if(len(elements) == 0):
@@ -24,7 +24,7 @@ def search_around(driver ,times, string):
             elements[rand_num].click()
             print(i)
         except Exception as e:
-            driver.back()
+#             driver.back()
             print(e)
             pass
 def send_keys_slow(inputElement, string):
@@ -67,8 +67,8 @@ def get_random_country_geolocation():
     geolocation = country_list[country]
     return country,geolocation[0], geolocation[1]
 
-# cmp_ip = '61.216.99.1'
-cmp_ip = '114.136.170.228'
+cmp_ip = '61.216.99.1'
+# cmp_ip = '114.136.170.228'
 origin_ip = cmp_ip
 
 index2 = 0
@@ -104,6 +104,27 @@ while True:
 
         driver.switch_to_window('')
         driver.maximize_window()
+        
+        driver.execute_script(script); 
+        driver.get('https://www.google.com.tw')
+        inputElement = driver.find_element_by_id('lst-ib')
+        confusion_words = ('抓姦推薦','抓奸廣告','徵信','抓小三','跟監','抓猴')
+        confusion_word = random.choice(confusion_words)
+        send_keys_slow(inputElement, confusion_word)
+        # driver.execute_script(script); 
+        inputElement.submit()
+        time.sleep(1)
+        try:
+            print('confuse-start')
+            elements = driver.find_elements_by_partial_link_text(confusion_word)
+            rand_num = random.randint(1,len(elements))
+            elements[rand_num].click()
+            search_around(driver ,10,'')
+            print('confuse-end')
+        except Exception as e:
+            print(e)
+            pass
+
 
         driver.execute_script(script); 
         driver.get('https://www.google.com.tw')
@@ -121,7 +142,7 @@ while True:
         
         keywords = ('離婚協議法律','法律諮詢服務網')
         keyword = random.choice(keywords)
-#         keyword = prefix + keyword + suffix
+        keyword = prefix + keyword + suffix
         send_keys_slow(inputElement, keyword)
         driver.execute_script(script); 
 
