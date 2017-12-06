@@ -24,16 +24,32 @@ for i in range(times):
     inputElement.send_keys('徵信')
     inputElement.submit()
     target_words = ('www.twgoodspy',)
+#     try:
+#         target = '//cite[text()[contains(.,"%s")]]' % random.choice(target_words)
+# #         print(target)
+#         element = driver.find_element_by_xpath(target)
+#         print(element.text)
+#         target2 = target+' /../../div[1]/h3/a[2]'
+#         print(target2,'---t2')
+#         element2 = driver.find_element_by_xpath(target2)
+#         element2.click()
+#     except Exception as e:
+#         print(e)
+#         time.sleep(10)
+#         driver.quit()
     try:
-        target = '//cite[text()[contains(.,"%s")]]' % random.choice(target_words)
-#         print(target)
-        element = driver.find_element_by_xpath(target)
-        print(element.text)
+        target = '//cite[text()[contains(.,"徵信")]]'
+#         elements = driver.find_elements_by_xpath(target)
         target2 = target+' /../../div[1]/h3/a[2]'
         print(target2,'---t2')
-        element2 = driver.find_element_by_xpath(target2)
-        element2.click()
+        elements = driver.find_elements_by_xpath(target2)
+        elements[1].click()
+#         elements.click()
+#         element = element.tag_name
+#         for element in elements:
+#             print(element.text)
     except Exception as e:
         print(e)
-        time.sleep(10)
-        driver.quit()
+    
+    time.sleep(5)
+    driver.quit()
