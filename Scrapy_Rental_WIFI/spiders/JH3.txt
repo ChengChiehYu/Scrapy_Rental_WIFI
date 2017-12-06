@@ -5,13 +5,30 @@ import time
 import random
 import re
 
-keywords = ('離婚協議法律','法律諮詢服務網')
-target_words = ('法律諮詢網 - 離婚協議法律')
+keywords = ('徵信',)
+target_urls = ('www.taipeidick.org.tw','www.twgoodspy.com','true.detective-007.com','www.soku007.com','www.global-detective.org','www.gemstw.com','www.feifarn.com')
+protect_words = ('www.lawknow.com',)
+
+do_ip_check = False
+do_search_around = False
+do_confuse_search = False
+do_send_keys_slow = False
+do_time_sleep = False
+
+def is_protect_word(text):
+    protect_words = ('www.lawknow.com',)
+    for protect_word in protect_words:
+        if(re.search(protect_word, text)):
+            return True
+        return False
 
 def search_around(driver ,times, string):
+    if(not do_search_around):
+        times = 0
     for i in range(times):
         try:
-            time.sleep(random.randint(15,45))            
+            if(do_time_sleep):
+                time.sleep(random.randint(15,45))            
             elements = driver.find_elements_by_tag_name('a')
             if(len(elements) == 0):
                 driver.back()
@@ -24,6 +41,8 @@ def search_around(driver ,times, string):
             pass
     
 def confuse_search(driver, times, times2, scrpit):
+    if(not do_confuse_search):
+        times = 0
     for i in range(times):    
         driver.execute_script(script); 
         driver.get('https://www.google.com.tw')
@@ -32,13 +51,20 @@ def confuse_search(driver, times, times2, scrpit):
         confusion_word = random.choice(confusion_words)
         send_keys_slow(inputElement, confusion_word)
         inputElement.submit()
-        time.sleep(1)
+        if(do_time_sleep):
+            time.sleep(1)
         try:
             print('confuse-start')
-            elements = driver.find_elements_by_partial_link_text(confusion_word)
-            rand_num = random.randint(0,len(elements)-1)
-            elements[rand_num].click()
-            search_around(driver ,times2,'')
+            for ii in range(10):
+                try:
+                    target2 = '//h3/a[1]'
+                    elements = driver.find_elements_by_xpath(target2)
+                    random.choice(elements).click()
+                    search_around(driver ,times2,'')
+                    print('success')
+                    break;
+                except:
+                    print('error')
             print('confuse-end')
         except Exception as e:
 #             print(e)
@@ -46,7 +72,8 @@ def confuse_search(driver, times, times2, scrpit):
 def send_keys_slow(inputElement, string):
     for i in range(len(string)):
         inputElement.send_keys(string[i])
-        time.sleep(random.randint(30,150)/100)
+        if(do_send_keys_slow):
+            time.sleep(random.randint(30,150)/100)
 def get_current_ip():
     res = requests.get('http://ipinfo.io')
     soup = BeautifulSoup(res.text,'lxml')
@@ -90,20 +117,22 @@ origin_ip = cmp_ip
 index2 = 0
 while True:
     index2 = index2 +1
-    print(str(index2)+'------index')
     while True:
         try:
+            if(not do_ip_check):
+                break
             new_ip = get_current_ip()        
 #             print(origin_ip)
             if(origin_ip != new_ip and cmp_ip != new_ip):
                 origin_ip = new_ip
+                print(str(index2)+'------index')
+                print(new_ip)
                 break
             time.sleep(30)
         except Exception as e:
 #             print(e)
             pass
     try:
-        print(new_ip)
         country, latitude, longitude= get_random_country_geolocation()
         print(country)
         lf = (random.randint(0,1000)-500)/1000000
@@ -126,7 +155,8 @@ while True:
         
         driver.execute_script(script); 
         driver.get('https://www.google.com.tw')
-        time.sleep(5)
+        if(do_time_sleep):
+            time.sleep(5)
         inputElement = driver.find_element_by_id('lst-ib')
         modification_words = ('推薦','廣告','抓姦','抓奸','好評','厲害','第一','最強','最快','徵信','台北','ptt','first','bset','recommend')
         modification_words = list(modification_words)
@@ -145,37 +175,37 @@ while True:
 
         inputElement.submit()
         driver.execute_script(script);
-        time.sleep(10)
+#         time.sleep(10)
 #         driver.refresh()
 #         element = driver.find_element_by_xpath('//*[@id="nav"]/tbody/tr/td[3]/a')
 #         element.click()
 #         time.sleep(10)
 
-
-        index = 0
-        while index < 3:
-            try :
-                target = '//a[text()[contains(.,"%s")]]' % random.choice(target_words)
+        confuse_search(driver, random.randint(0,1),2, script)
+        for ii in range(20):
+            try:
+                target = '//cite[text()[contains(.,"%s")]]' % random.choice(target_urls)
                 element = driver.find_element_by_xpath(target)
+                print(element.text)
+                target2 = target+' /../../div[1]/h3/a[2]'
+#                 print(target2,'---t2')
+                element = driver.find_element_by_xpath(target2)
+                if(do_time_sleep):
+                    time.sleep(2)
+                element.click()
+                search_around(driver,random.randint(2,5),"")
                 break
             except Exception as e:
-                confuse_search(driver, random.randint(0,1),2, script)
+#                 print(e,'--a')
                 pass
-            finally :
-                index = index + 1
-        if(index == 3):
-            driver.quit()
-        else:
-            time.sleep(2)
-            element.click()
-            search_around(driver,random.randint(2,5),"")
-            confuse_search(driver, random.randint(0,1),6, script)
-    #         time.sleep(30)
-            driver.delete_all_cookies()
-            driver.quit()
+            
+        confuse_search(driver, random.randint(0,1),6, script)
+        driver.delete_all_cookies()
     except Exception as e:
-#         print(e)
+        print(e,'--b')
         pass
+    finally:
+        driver.quit()
 
 
     
