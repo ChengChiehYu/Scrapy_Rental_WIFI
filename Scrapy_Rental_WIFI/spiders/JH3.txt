@@ -5,19 +5,33 @@ import time
 import random
 import re
 
-#最後面都要有逗號
-#要搜尋的關鍵字
-keywords = ('徵信社收費','徵信社費用','徵信社價錢',)
-#目標網址(廣告綠色小字旁邊的那個)
-target_urls = ('www.female007.com.tw','www.realtruth.com.tw','www.truedetect.com.tw','www.her-detective.com.tw','www.cool007.org','www.sailing007.com','www.sinyidetect.com.tw',)
-#保護網址(廣告綠色小字旁邊的那個),
-protect_words = ('www.twgoodspy.com','www.tw07.biz','www.wanqing.org','www.topspy.org',)
+do_ip_check = False
+do_search_around = False
+do_confuse_search = False
+do_send_keys_slow = False
+do_time_sleep = False
 
-do_ip_check = True
-do_search_around = True
-do_confuse_search = True
-do_send_keys_slow = True
-do_time_sleep = True
+f = open('configure.txt', 'r' , encoding = 'UTF-8')
+confusion_words = f.readline()
+confusion_words = confusion_words.split(',')
+del confusion_words[-1]
+#print(confusion_words)
+
+protect_words = f.readline()
+protect_words = protect_words.split(',')
+del protect_words[-1]
+#print(protect_words)
+
+modification_words = f.readline()
+modification_words = modification_words.split(',')
+del modification_words[-1]
+#print(modification_words)
+
+keywords = f.readline()
+keywords = keywords.split(',')
+del keywords[-1]
+#print(modification_words)
+f.close()
 
 def is_protect_word(text):
     for protect_word in protect_words:
@@ -50,7 +64,7 @@ def confuse_search(driver, times, times2, scrpit):
         driver.execute_script(script); 
         driver.get('https://www.google.com.tw')
         inputElement = driver.find_element_by_id('lst-ib')
-        confusion_words = ('抓姦推薦','徵信','抓小三','跟監','抓猴','通姦','通姦罪','通姦犯法嗎','性交','徵信社','跟拍','跟拍多少錢','通姦的定義','通姦案例','配偶與人通姦','第三者','外遇','一夜情','通姦除罪','老公外遇','老公偷吃','老公怪怪的','老婆怪怪的','外遇蒐證','婚前徵信','婚姻恐懼症','尋人','尋人啟事','工商徵信','應收帳款','文書鑑定','鑑定文書','諮詢法律問題','法律問題','公益活動','一統徵信厲害嗎','一統','一桶徵信','一統徵信','徵信必破','徵信價格','婚外情','外遇調查','抓姦訴訟求償','抓姦求償','抓姦訴訟','訴訟求償','婚前','身家調查','家暴蒐證','個人行蹤','離婚專業','反跟蹤')
+#         confusion_words = ('抓姦推薦','徵信','抓小三','跟監','抓猴','通姦','通姦罪','通姦犯法嗎','性交','徵信社','跟拍','跟拍多少錢','通姦的定義','通姦案例','配偶與人通姦','第三者','外遇','一夜情','通姦除罪','老公外遇','老公偷吃','老公怪怪的','老婆怪怪的','外遇蒐證','婚前徵信','婚姻恐懼症','尋人','尋人啟事','工商徵信','應收帳款','文書鑑定','鑑定文書','諮詢法律問題','法律問題','公益活動','一統徵信厲害嗎','一統','一桶徵信','一統徵信','徵信必破','徵信價格','婚外情','外遇調查','抓姦訴訟求償','抓姦求償','抓姦訴訟','訴訟求償','婚前','身家調查','家暴蒐證','個人行蹤','離婚專業','反跟蹤')
         confusion_word = random.choice(confusion_words)
         send_keys_slow(inputElement, confusion_word)
         inputElement.submit()
@@ -162,7 +176,7 @@ while True:
         if(do_time_sleep):
             time.sleep(5)
         inputElement = driver.find_element_by_id('lst-ib')
-        modification_words = ('推薦','廣告','抓姦','抓奸','好評','厲害','第一','最強','最快','徵信','台北','ptt','first','bset','recommend')
+#         modification_words = ('推薦','廣告','抓姦','抓奸','好評','厲害','第一','最強','最快','徵信','台北','ptt','first','bset','recommend')
         modification_words = list(modification_words)
         prefix = ''
         if(random.randint(0,1)):
@@ -185,23 +199,36 @@ while True:
 #         element.click()
 #         time.sleep(10)
 
-        confuse_search(driver, random.randint(0,1),2, script)
-        for ii in range(20):
-            try:
-                target = '//cite[text()[contains(.,"%s")]]' % random.choice(target_urls)
-                element = driver.find_element_by_xpath(target)
-                print(element.text)
-                target2 = target+' /../../div[1]/h3/a[2]'
-#                 print(target2,'---t2')
-                element = driver.find_element_by_xpath(target2)
-                if(do_time_sleep):
-                    time.sleep(2)
-                element.click()
-                search_around(driver,random.randint(2,5),"")
-                break
-            except Exception as e:
-#                 print(e,'--a')
-                pass
+#         confuse_search(driver, random.randint(0,1),2, script)
+        try:
+#                 target = '//cite[text()[contains(.,"%s")]]' % random.choice(target_urls)
+#                 element = driver.find_element_by_xpath(target)
+#                 print(element.text)
+#                 target2 = target+' /../../div[1]/h3/a[2]'
+# #                 print(target2,'---t2')
+#                 element = driver.find_element_by_xpath(target2)
+            elements = driver.find_elements_by_class_name('_WGk')
+            target_index = list()
+#             print(len(elements))
+            for ii in range(len(elements)):
+                if(not is_protect_word(elements[ii].text)):
+                    target_index.append(ii)
+#                 print(elements[ii].text)
+            target2 = '//h3/a[2]'
+    #         print(target2,'---t2')
+            elements2 = driver.find_elements_by_xpath(target2)
+            r_num = random.choice(target_index)
+            if(do_time_sleep):
+                time.sleep(2)
+#             print(target_index)
+            print(elements[r_num].text)
+            elements2[r_num].click()
+#                 element.click()
+            search_around(driver,random.randint(2,5),"")
+        except Exception as e:
+#             time.sleep(30)
+            print(e,'--a')
+            pass
             
         confuse_search(driver, random.randint(0,1),6, script)
         driver.delete_all_cookies()
