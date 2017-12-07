@@ -38,12 +38,16 @@ for i in range(times):
 #         time.sleep(10)
 #         driver.quit()
     try:
-        target = '//cite[text()[contains(.,"徵信")]]'
-#         elements = driver.find_elements_by_xpath(target)
-        target2 = target+' /../../div[1]/h3/a[2]'
-        print(target2,'---t2')
+        target = '._WGk'
+        elements = driver.find_elements_by_class_name('_WGk')
+        for ele in elements:
+            print(ele.text)
+        target2 = '//h3/a[2]'
+#         print(target2,'---t2')
         elements = driver.find_elements_by_xpath(target2)
-        elements[1].click()
+        for ele in elements:
+            print(ele.text)
+#         elements[1].click()
 #         elements.click()
 #         element = element.tag_name
 #         for element in elements:

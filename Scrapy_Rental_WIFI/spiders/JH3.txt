@@ -5,18 +5,21 @@ import time
 import random
 import re
 
-keywords = ('徵信',)
-target_urls = ('www.taipeidick.org.tw','www.twgoodspy.com','true.detective-007.com','www.soku007.com','www.global-detective.org','www.gemstw.com','www.feifarn.com')
-protect_words = ('www.lawknow.com',)
+#最後面都要有逗號
+#要搜尋的關鍵字
+keywords = ('徵信社收費','徵信社費用','徵信社價錢',)
+#目標網址(廣告綠色小字旁邊的那個)
+target_urls = ('www.female007.com.tw','www.realtruth.com.tw','www.truedetect.com.tw','www.her-detective.com.tw','www.cool007.org','www.sailing007.com','www.sinyidetect.com.tw',)
+#保護網址(廣告綠色小字旁邊的那個),
+protect_words = ('www.twgoodspy.com','www.tw07.biz','www.wanqing.org','www.topspy.org',)
 
-do_ip_check = False
-do_search_around = False
-do_confuse_search = False
-do_send_keys_slow = False
-do_time_sleep = False
+do_ip_check = True
+do_search_around = True
+do_confuse_search = True
+do_send_keys_slow = True
+do_time_sleep = True
 
 def is_protect_word(text):
-    protect_words = ('www.lawknow.com',)
     for protect_word in protect_words:
         if(re.search(protect_word, text)):
             return True
@@ -61,10 +64,11 @@ def confuse_search(driver, times, times2, scrpit):
                     elements = driver.find_elements_by_xpath(target2)
                     random.choice(elements).click()
                     search_around(driver ,times2,'')
-                    print('success')
+#                     print('success')
                     break;
                 except:
-                    print('error')
+#                     print('error')
+                    pass
             print('confuse-end')
         except Exception as e:
 #             print(e)
@@ -169,7 +173,7 @@ while True:
             suffix = random.choice(modification_words)        
         
         keyword = random.choice(keywords)
-        keyword = prefix + keyword + suffix
+#         keyword = prefix + keyword + suffix
         send_keys_slow(inputElement, keyword)
         driver.execute_script(script); 
 
