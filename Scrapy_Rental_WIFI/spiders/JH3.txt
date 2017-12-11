@@ -1,18 +1,21 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import requests
 from bs4 import BeautifulSoup
 import time
 import random
 import re
 
-do_ip_check = False
-do_search_around = False
-do_confuse_search = False
-do_send_keys_slow = False
-do_time_sleep = False
+do_ip_check = True
+do_search_around = True
+do_confuse_search = True
+do_send_keys_slow = True
+do_time_sleep = True
 
 f = open('configure.txt', 'r' , encoding = 'UTF-8')
-confusion_words = f.readline()
+confusion_words = f.readline().replace('\ufeff','')
 confusion_words = confusion_words.split(',')
 del confusion_words[-1]
 #print(confusion_words)
@@ -20,7 +23,7 @@ del confusion_words[-1]
 protect_words = f.readline()
 protect_words = protect_words.split(',')
 del protect_words[-1]
-#print(protect_words)
+# print(protect_words)
 
 modification_words = f.readline()
 modification_words = modification_words.split(',')
@@ -35,9 +38,12 @@ f.close()
 
 def is_protect_word(text):
     for protect_word in protect_words:
+#         print(protect_word)
         if(re.search(protect_word, text)):
+#             print(text,'---true')
             return True
-        return False
+#         print(text,'--fasle')
+    return False
 
 def search_around(driver ,times, string):
     if(not do_search_around):
@@ -53,7 +59,6 @@ def search_around(driver ,times, string):
             elements[rand_num].click()
 #             print(i)
         except Exception as e:
-#             driver.back()
 #             print(e)
             pass
     
@@ -63,8 +68,9 @@ def confuse_search(driver, times, times2, scrpit):
     for i in range(times):    
         driver.execute_script(script); 
         driver.get('https://www.google.com.tw')
-        inputElement = driver.find_element_by_id('lst-ib')
-#         confusion_words = ('抓姦推薦','徵信','抓小三','跟監','抓猴','通姦','通姦罪','通姦犯法嗎','性交','徵信社','跟拍','跟拍多少錢','通姦的定義','通姦案例','配偶與人通姦','第三者','外遇','一夜情','通姦除罪','老公外遇','老公偷吃','老公怪怪的','老婆怪怪的','外遇蒐證','婚前徵信','婚姻恐懼症','尋人','尋人啟事','工商徵信','應收帳款','文書鑑定','鑑定文書','諮詢法律問題','法律問題','公益活動','一統徵信厲害嗎','一統','一桶徵信','一統徵信','徵信必破','徵信價格','婚外情','外遇調查','抓姦訴訟求償','抓姦求償','抓姦訴訟','訴訟求償','婚前','身家調查','家暴蒐證','個人行蹤','離婚專業','反跟蹤')
+        inputElement = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.ID, "lst-ib"))
+        )
         confusion_word = random.choice(confusion_words)
         send_keys_slow(inputElement, confusion_word)
         inputElement.submit()
@@ -168,15 +174,13 @@ while True:
         driver.switch_to_window('')
         driver.maximize_window()
 
-
         confuse_search(driver, random.randint(0,1), 5, script)
         
         driver.execute_script(script); 
         driver.get('https://www.google.com.tw')
-        if(do_time_sleep):
-            time.sleep(5)
-        inputElement = driver.find_element_by_id('lst-ib')
-#         modification_words = ('推薦','廣告','抓姦','抓奸','好評','厲害','第一','最強','最快','徵信','台北','ptt','first','bset','recommend')
+        inputElement = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.ID, "lst-ib"))
+        )
         modification_words = list(modification_words)
         prefix = ''
         if(random.randint(0,1)):
@@ -187,26 +191,22 @@ while True:
             suffix = random.choice(modification_words)        
         
         keyword = random.choice(keywords)
-#         keyword = prefix + keyword + suffix
+        keyword = prefix + keyword + suffix
         send_keys_slow(inputElement, keyword)
         driver.execute_script(script); 
 
         inputElement.submit()
         driver.execute_script(script);
-#         time.sleep(10)
+#         time.sleep(3)
 #         driver.refresh()
 #         element = driver.find_element_by_xpath('//*[@id="nav"]/tbody/tr/td[3]/a')
 #         element.click()
 #         time.sleep(10)
-
-#         confuse_search(driver, random.randint(0,1),2, script)
         try:
-#                 target = '//cite[text()[contains(.,"%s")]]' % random.choice(target_urls)
-#                 element = driver.find_element_by_xpath(target)
-#                 print(element.text)
-#                 target2 = target+' /../../div[1]/h3/a[2]'
-# #                 print(target2,'---t2')
-#                 element = driver.find_element_by_xpath(target2)
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "_WGk"))
+#                 driver.find_element_by_class_name('_WGk')
+            )
             elements = driver.find_elements_by_class_name('_WGk')
             target_index = list()
 #             print(len(elements))

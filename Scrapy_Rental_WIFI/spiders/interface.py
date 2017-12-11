@@ -10,7 +10,7 @@ import tkinter as tk
 import time
 
 f = open('configure.txt', 'r' , encoding = 'UTF-8')
-confusion_words = f.readline()
+confusion_words = f.readline().replace('\ufeff','')
 confusion_words = confusion_words.split(',')
 del confusion_words[-1]
 #print(confusion_words)
@@ -39,6 +39,7 @@ def save_and_exit():
     f.write(var1_2.get()[1:-1].replace("'" , '').replace(" " , '')+',\n')
     f.write(var2_2.get()[1:-1].replace("'" , '').replace(" " , '')+',\n')
     f.write(var3_2.get()[1:-1].replace("'" , '').replace(" " , '')+',\n')
+    f.write(var4_2.get()[1:-1].replace("'" , '').replace(" " , '')+',\n')
     f.close()
     exit()
 
@@ -46,6 +47,7 @@ def add_keyword(en,lb):
     if(en.get() !=''):
         lb.insert(0,en.get())
         en.delete(0,tk.END)
+        print(var1_2.get())
         
 def delete_keyword(lb):
     select_keyword = lb.curselection()
@@ -55,7 +57,7 @@ def delete_keyword(lb):
         
 window = tk.Tk()
 window.title('my window')
-window.geometry('500x1000')
+window.geometry('450x750+650+100')
 padxy = 10
 
 # frame1
@@ -63,8 +65,8 @@ fr1 = tk.Frame(window)
 fr1.grid(row=0,column=0,padx=padxy,pady=padxy)
 
 var1_1 = tk.StringVar()
-var1_1.set('搜尋字')
-lab1_1 = tk.Label(fr1, textvariable = var1_1,bg = 'yellow')
+var1_1.set('隨機搜尋字')
+lab1_1 = tk.Label(fr1, textvariable = var1_1)
 lab1_1.grid(row=0,column=0,columnspan=2,padx=padxy,pady=padxy)
 
 en1 = tk.Entry(fr1)
@@ -90,7 +92,7 @@ fr2.grid(row=0,column=1,padx=padxy,pady=padxy)
 
 var2_1 = tk.StringVar()
 var2_1.set('保護網址')
-lab2_1 = tk.Label(fr2, textvariable = var2_1,bg = 'yellow')
+lab2_1 = tk.Label(fr2, textvariable = var2_1)
 lab2_1.grid(row=0,column=0,columnspan=2,padx=padxy,pady=padxy)
 
 en2 = tk.Entry(fr2)
@@ -116,7 +118,7 @@ fr3.grid(row=1,column=0,padx=padxy,pady=padxy)
 
 var3_1 = tk.StringVar()
 var3_1.set('修飾字')
-lab3_1 = tk.Label(fr3, textvariable = var3_1,bg = 'yellow')
+lab3_1 = tk.Label(fr3, textvariable = var3_1)
 lab3_1.grid(row=0,column=0,columnspan=2,padx=padxy,pady=padxy)
 
 en3 = tk.Entry(fr3)
@@ -142,15 +144,15 @@ fr4.grid(row=1,column=1,padx=padxy,pady=padxy)
 
 var4_1 = tk.StringVar()
 var4_1.set('關鍵字')
-lab4_1 = tk.Label(fr4, textvariable = var4_1,bg = 'yellow')
+lab4_1 = tk.Label(fr4, textvariable = var4_1)
 lab4_1.grid(row=0,column=0,columnspan=2,padx=padxy,pady=padxy)
 
 en4 = tk.Entry(fr4)
 en4.grid(row=1,column=0,columnspan=2,padx=padxy,pady=padxy)
 
-btn4_1 = tk.Button(fr4, text = '增加',command = lambda : add_keyword(en3,lb3))
+btn4_1 = tk.Button(fr4, text = '增加',command = lambda : add_keyword(en4,lb4))
 btn4_1.grid(row=2,column=0,padx=padxy,pady=padxy)
-btn4_2 = tk.Button(fr4, text = '刪除',command = lambda : delete_keyword(lb3))
+btn4_2 = tk.Button(fr4, text = '刪除',command = lambda : delete_keyword(lb4))
 btn4_2.grid(row=2,column=1,padx=padxy,pady=padxy)
 
 var4_2 = tk.StringVar()
