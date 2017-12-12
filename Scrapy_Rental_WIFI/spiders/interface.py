@@ -46,7 +46,7 @@ del protect_words[-1]
 keywords = f.readline()
 keywords = keywords.split(',')
 del keywords[-1]
-#print(keywords)
+# print(keywords)
 
 # 關鍵字-修飾字
 modification_words_of_keywords = f.readline()
@@ -84,14 +84,22 @@ f.close()
 def exit():
     window.destroy()
 
+def get_text(text): 
+    if(text == ''):
+        return text + '\n'
+    else:
+        if(text[-1] == ","):
+            text = text[:-1]
+        return text + ',\n'
+
 def save_and_exit():
     f = open('configure.txt', 'w' , encoding = 'UTF-8')
-    f.write(var1_2.get()[1:-1].replace("'" , '').replace(" " , '')+',\n')
-    f.write(var2_2.get()[1:-1].replace("'" , '').replace(" " , '')+',\n')
-    f.write(var3_2.get()[1:-1].replace("'" , '').replace(" " , '')+',\n')
-    f.write(var4_2.get()[1:-1].replace("'" , '').replace(" " , '')+',\n')
-    f.write(var5_2.get()[1:-1].replace("'" , '').replace(" " , '')+',\n')
-    f.write(var6_2.get()[1:-1].replace("'" , '').replace(" " , '')+',\n')
+    f.write(get_text(var1_2.get()[1:-1].replace("'" , '').replace(" " , '')))
+    f.write(get_text(var2_2.get()[1:-1].replace("'" , '').replace(" " , '')))
+    f.write(get_text(var3_2.get()[1:-1].replace("'" , '').replace(" " , '')))
+    f.write(get_text(var4_2.get()[1:-1].replace("'" , '').replace(" " , '')))
+    f.write(get_text(var5_2.get()[1:-1].replace("'" , '').replace(" " , '')))
+    f.write(get_text(var6_2.get()[1:-1].replace("'" , '').replace(" " , '')))
     f.write(en7_1.get()+','+en7_2.get()+',\n')
     f.write(en8_1.get()+','+en8_2.get()+',\n')
     f.write(en9_1.get()+','+en9_2.get()+',\n')
@@ -112,7 +120,7 @@ def delete_keyword(lb):
         
 window = tk.Tk()
 window.title('my window')
-window.geometry('1100x750+650+100')
+window.geometry('950x750+350+100')
 padxy = 10
 
 #frame left
@@ -273,7 +281,7 @@ lb6.grid(row=3,column=0,columnspan=3,padx=padxy,pady=padxy)
 sc6 = tk.Scrollbar(fr6, orient="vertical")
 sc6.grid(row=3,column=3,padx=padxy,pady=padxy)
 lb6.config(yscrollcommand=sc6.set)
-sc6.config(command=lb4.yview)
+sc6.config(command=lb6.yview)
 
 #frame right
 frr = tk.Frame(window)

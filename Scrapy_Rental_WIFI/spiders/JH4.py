@@ -9,11 +9,11 @@ import random
 import re
 import datetime
 
-do_ip_check = False
-do_search_around = False
-do_confuse_search = False
-do_send_keys_slow = False
-do_time_sleep = False
+do_ip_check = True
+do_search_around = True
+do_confuse_search = True
+do_send_keys_slow = True
+do_time_sleep = True
 
 f = open('configure.txt', 'r' , encoding = 'UTF-8')
 # 隨機搜尋字
@@ -114,6 +114,18 @@ def is_exercise_time():
             return True
         else:
             return False
+        
+def sleep_until_exercise_time():
+    start = int(exercise_time[0])
+    end = int(exercise_time[1])
+    print('預計運行時間: ',start,'-',end)
+    hour = datetime.datetime.now().hour
+    minute = datetime.datetime.now().minute
+    if(hour > start):
+        time.sleep(((start-hour+24)*60+-minute)*60)
+    else:
+        time.sleep(((start-hour)*60+-minute)*60)
+
 
 def is_protect_word(text):
     for protect_word in protect_words:
@@ -144,7 +156,6 @@ def search_around(driver ,times, string):
             ind = ind + 1
 #             print(i)
         except Exception as e:
-#             print(e)
             pass
     return ind
     
@@ -154,18 +165,17 @@ def confuse_search(driver, times, times2, scrpit):
     for i in range(times):    
         driver.execute_script(script); 
         driver.get('https://www.google.com.tw')
-        inputElement = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.ID, "lst-ib"))
-        )
+        time.sleep(3)
+        inputElement = driver.find_element_by_id("lst-ib")
         global modification_words_of_confusion
-        modification_words_of_confusion = list(modification_words_of_confusion)
+        modification_words = list(modification_words_of_confusion)
         prefix = ''
         if(random.randint(0,1)):
-            prefix = random.choice(modification_words_of_confusion)
-            modification_words_of_confusion.remove(prefix)
+            prefix = random.choice(modification_words)
+            modification_words.remove(prefix)
         suffix = ''
         if(random.randint(0,1)):
-            suffix = random.choice(modification_words_of_confusion)  
+            suffix = random.choice(modification_words)  
         confusion_word = random.choice(confusion_words)
         confusion_word = prefix + confusion_word + suffix
         send_keys_slow(inputElement, confusion_word)
@@ -235,7 +245,8 @@ origin_ip = cmp_ip
 index2 = 0
 while True:
     if(not is_exercise_time()):
-        time.sleep(60)
+        sleep_until_exercise_time()
+        
     index2 = index2 +1
     while True:
         try:
@@ -276,17 +287,16 @@ while True:
         
         driver.execute_script(script); 
         driver.get('https://www.google.com.tw')
-        inputElement = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.ID, "lst-ib"))
-        )
-        modification_words_of_keywords = list(modification_words_of_keywords)
+        time.sleep(3)
+        inputElement = driver.find_element_by_id("lst-ib")
+        modification_words = list(modification_words_of_keywords)
         prefix = ''
         if(random.randint(0,1)):
-            prefix = random.choice(modification_words_of_keywords)
-            modification_words_of_keywords.remove(prefix)
+            prefix = random.choice(modification_words)
+            modification_words.remove(prefix)
         suffix = ''
         if(random.randint(0,1)):
-            suffix = random.choice(modification_words_of_keywords)        
+            suffix = random.choice(modification_words)        
         
         keyword = random.choice(keywords)
         keyword = prefix + keyword + suffix
@@ -306,12 +316,12 @@ while True:
                 for j in range(ind):
                     try:
                         driver.back()
+                        time.sleep(1)
                         elements = driver.find_elements_by_class_name('_WGk')
                         click_keywords(driver)
                         break
                     except Exception as e:
-                        print(e,'--c')
-                        
+                        pass
         except Exception as e:
             print(e,'--a')
             pass
