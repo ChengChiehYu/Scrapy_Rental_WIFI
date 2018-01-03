@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -115,6 +116,9 @@ def click_keywords(driver):
         time.sleep(2)
     print(elements[r_num].text)
     elements2[r_num].click()
+    if(search_engine == 'yahoo'):
+        driver.switch_to.window(driver.window_handles[-1])
+
     return search_around(driver, random.randint(spt0,spt1),"")
 
 def is_exercise_time():
@@ -206,6 +210,8 @@ def confuse_search(driver, times, times2, scrpit):
                     target2 = not_keyword_xpath
                     elements = driver.find_elements_by_xpath(target2)
                     random.choice(elements).click()
+                    if(search_engine == 'yahoo'):
+                        driver.switch_to.window(driver.window_handles[-1])
                     search_around(driver ,times2,'')
                     break;
                 except:
@@ -291,7 +297,10 @@ while True:
             success(position);
           }
         ''' % (latitude+lf, longitude+tb)
-        driver = webdriver.Chrome()
+        
+        chrome_options = Options()
+        chrome_options.add_argument("--disable-infobars")
+        driver = webdriver.Chrome(chrome_options = chrome_options)
         driver.delete_all_cookies()
         
 
@@ -302,7 +311,7 @@ while True:
         confuse_search(driver, random.randint(0,1), random.randint(spt0,spt1), script)
 
         
-        driver.execute_script(script); 
+        driver.execute_script(script)
         driver.get(search_engine_url)
         time.sleep(3)
         inputElement = driver.find_element_by_id(input_element_id)
