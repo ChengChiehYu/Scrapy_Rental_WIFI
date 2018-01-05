@@ -16,8 +16,8 @@ do_confuse_search = True
 do_send_keys_slow = False
 do_time_sleep = True
 
-# search_engine = 'google'
-search_engine = 'yahoo'
+search_engine = 'google'
+# search_engine = 'yahoo'
 
 if(search_engine == 'google'):
     search_engine_url = 'https://www.google.com.tw'
@@ -184,7 +184,9 @@ def confuse_search(driver, times, times2, scrpit):
     if(not do_confuse_search):
         times = 0
     for i in range(times):    
-        driver.execute_script(script); 
+        driver.execute_script(script)
+        if(search_engine == 'yahoo'):
+            driver.switch_to.window(driver.window_handles[-1])
         driver.get(search_engine_url)
         time.sleep(3)
         inputElement = driver.find_element_by_id(input_element_id)
@@ -312,6 +314,8 @@ while True:
 
         
         driver.execute_script(script)
+        if(search_engine == 'yahoo'):
+            driver.switch_to.window(driver.window_handles[-1])
         driver.get(search_engine_url)
         time.sleep(3)
         inputElement = driver.find_element_by_id(input_element_id)
@@ -359,7 +363,3 @@ while True:
         pass
     finally:
         driver.quit()
-
-
-    
-
